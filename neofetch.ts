@@ -6,7 +6,9 @@ const  hostname = HostName()
 const shellName = GetShell()
 const uptime = await getUptime();
 
+getUsernameAndHostname()
 
+console.log("----------------------------------------")
 
 console.log('\x1b[31m%s\x1b[0m',`Current shell: ${shellName}`);
 console.log('\x1b[36m%s\x1b[0m',`Hostname: ${hostname}`);
@@ -122,3 +124,10 @@ async function getDiskUsage(): Promise<string> {
 
      console.log('\x1b[32m%s\x1b[0m',`Disk (/): ${usedSpace} / ${totalSpace} (${percentageUsed})`);
 }
+
+function getUsernameAndHostname(): { username: string, hostname: string } {
+    const username = Deno.env.get('USER');
+    const hostname = Deno.hostname();
+    console.log('\x1b[32m%s\x1b[0m',`${username}@${hostname}`)
+}
+
