@@ -1,26 +1,27 @@
+import colors from "./colors.ts";
 
 const packageList = await getInstalledPackages();
-const osName = OsName()
+const osName = OsName();
 const kernelVersion = await getKernelVersion();
-const  hostname = HostName()
-const shellName = GetShell()
+const hostname = HostName();
+const shellName = GetShell();
 const uptime = await getUptime();
 
-getUsernameAndHostname()
+getUsernameAndHostname();
 
-console.log("----------------------------------------")
+console.log("----------------------------------------");
 
-console.log('\x1b[31m%s\x1b[0m',`Current shell: ${shellName}`);
-console.log('\x1b[36m%s\x1b[0m',`Hostname: ${hostname}`);
+console.log(colors.red, `Current shell: ${shellName}`);
+console.log(colors.blue, `Hostname: ${hostname}`);
 printCPUModelName().then();
-console.log('\x1b[35m%s\x1b[0m',`Operating system: ${osName}`);
-console.log('\x1b[32m%s\x1b[0m',`Packages: ${packageList.length} (brew)`);
+console.log(colors.purple, `Operating system: ${osName}`);
+console.log(colors.green, `Packages: ${packageList.length} (brew)`);
 console.log(`Kernel version: ${kernelVersion}`);
-console.log('\x1b[33m%s\x1b[0m',`Uptime: ${uptime.days} days,  ${uptime.minutes} minutes`);
-getDiskUsage()
-
-
-
+console.log(
+    colors.yellow,
+    `Uptime: ${uptime.days} days,  ${uptime.minutes} minutes`,
+);
+getDiskUsage();
 
 async function getKernelVersion(): Promise<string> {
     const output = await Deno.run({
@@ -31,7 +32,6 @@ async function getKernelVersion(): Promise<string> {
     return new TextDecoder().decode(output).trim();
 }
 
-
 async function Model(): Promise<string> {
     const output = await Deno.run({
         cmd: ["sysctl", "machdep.cpu.brand_string"],
@@ -41,23 +41,20 @@ async function Model(): Promise<string> {
 }
 async function printCPUModelName() {
     const modelName = await Model();
-    console.log('\x1b[34m%s\x1b[0m',`CPU model name: ${modelName}`);
+    console.log("\x1b[34m%s\x1b[0m", `CPU model name: ${modelName}`);
 }
 
-
-
-
-
-function HostName(){
-    return  Deno.hostname();
+function HostName() {
+    return Deno.hostname();
 }
 
-
-function OsName(){
-    return Deno.build.os
+function OsName() {
+    return Deno.build.os;
 }
 
-async function getUptime(): Promise<{days: number, hours: number, minutes: number}> {
+async function getUptime(): Promise<
+    { days: number; hours: number; minutes: number }
+    > {
     const output = await Deno.run({
         cmd: ["uptime"],
         stdout: "piped",
@@ -75,7 +72,6 @@ async function getUptime(): Promise<{days: number, hours: number, minutes: numbe
     return { days, hours: parseInt(hours), minutes: parseInt(minutes) };
 }
 
-
 async function getInstalledPackages(): Promise<string[]> {
     const output = await Deno.run({
         cmd: ["brew", "list"],
@@ -90,13 +86,11 @@ async function getInstalledPackages(): Promise<string[]> {
     return packageList;
 }
 
-function GetShell(){
+function GetShell() {
     return Deno.env.get("SHELL")?.split("/").pop();
 }
 
-
-
-async function getDiskUsage(): Promise<string> {
+async function getDiskUsage() {
     const process = Deno.run({
         cmd: ["df", "-h", "/"],
         stdout: "piped",
@@ -122,12 +116,14 @@ async function getDiskUsage(): Promise<string> {
     const totalSpace = tokens[3];
     const percentageUsed = tokens[4];
 
-     console.log('\x1b[32m%s\x1b[0m',`Disk (/): ${usedSpace} / ${totalSpace} (${percentageUsed})`);
+    console.log(
+        colors.green,
+        `Disk (/): ${usedSpace} / ${totalSpace} (${percentageUsed})`,
+    );
 }
 
-function getUsernameAndHostname(): { username: string, hostname: string } {
-    const username = Deno.env.get('USER');
+function getUsernameAndHostname(){
+    const username = Deno.env.get("USER");
     const hostname = Deno.hostname();
-    console.log('\x1b[32m%s\x1b[0m',`${username}@${hostname}`)
+    console.log(colors.green, `${username}@${hostname}`);
 }
-
