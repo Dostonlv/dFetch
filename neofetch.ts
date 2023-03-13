@@ -67,9 +67,11 @@ async function getUptime(): Promise<
     const days = match ? parseInt(match[1]) : 0;
 
     const hoursRegExp = /(\d+):(\d+)/;
-    const [_, hours, minutes] = uptimeText.match(hoursRegExp);
-
-    return { days, hours: parseInt(hours), minutes: parseInt(minutes) };
+    console.log(uptimeText)
+    const res = uptimeText.match(hoursRegExp);
+    const h =  res![1]
+    const m:string = res![2]
+    return { days, hours: parseInt(h), minutes: parseInt(m) };
 }
 
 async function getInstalledPackages(): Promise<string[]> {
